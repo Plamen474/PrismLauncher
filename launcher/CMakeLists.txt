@@ -651,6 +651,8 @@ set(PRISMUPDATER_SOURCES
     net/HttpMetaCache.h
     net/Logging.h
     net/Logging.cpp
+    net/Mirror.h
+    net/Mirror.cpp
     net/NetRequest.cpp
     net/NetRequest.h
     net/NetJob.cpp
