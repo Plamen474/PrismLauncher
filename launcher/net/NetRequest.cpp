@@ -47,6 +47,8 @@
 #include <cstdint>
 #include <memory>
 
+#include "net/Mirror.h"
+
 #if defined(LAUNCHER_APPLICATION)
 #include "Application.h"
 #include "settings/SettingsObject.h"
@@ -70,6 +72,13 @@ void NetRequest::addValidator(Validator* v)
 
 void NetRequest::executeTask()
 {
+    // Route allowlisted hosts through the personal pull-through mirror.
+    // mirrorUrl() leaves MirrorBase-empty, non-allowlisted and auth hosts unchanged
+    // and debug-logs each rewrite. This single choke point covers Download, Upload,
+    // ApiDownload/ApiUpload, Java manifest/archive tasks, meta index and mod downloads,
+    // since all of them set m_url and flow through here before getReply().
+    m_url = Net::mirrorUrl(m_url);
+
     setStatus(tr("Requesting %1").arg(StringUtils::truncateUrlHumanFriendly(m_url, 80)));
 
     if (getState() == Task::State::AbortedByUser) {

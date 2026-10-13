@@ -144,6 +144,8 @@ set(NET_SOURCES
     net/ApiDownload.cpp
     net/ApiUpload.cpp
     net/ApiUpload.h
+    net/Mirror.h
+    net/Mirror.cpp
     net/NetRequest.cpp
     net/NetRequest.h
 )

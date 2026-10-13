@@ -871,6 +871,10 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 
             // Legacy FML libs URL
             resetIfInvalid(m_settings->registerSetting("LegacyFMLLibsURLOverride", "").get());
+
+            // Personal pull-through mirror base. Default routes allowlisted hosts
+            // through https://mcassets.ifbw.uk. Blank it to restore stock behavior.
+            resetIfInvalid(m_settings->registerSetting("MirrorBase", "https://mcassets.ifbw.uk").get());
         }
 
         m_settings->registerSetting("CloseAfterLaunch", false);
