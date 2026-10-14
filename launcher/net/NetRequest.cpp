@@ -77,6 +77,9 @@ void NetRequest::executeTask()
     // and debug-logs each rewrite. This single choke point covers Download, Upload,
     // ApiDownload/ApiUpload, Java manifest/archive tasks, meta index and mod downloads,
     // since all of them set m_url and flow through here before getReply().
+    // NOTE: header proxies match on request.host() (Modrinth Authorization token,
+    // modrinth-download-meta, Flame key), so they run against the pre-mirror URL.
+    const QUrl originalUrl = m_url;
     m_url = Net::mirrorUrl(m_url);
 
     setStatus(tr("Requesting %1").arg(StringUtils::truncateUrlHumanFriendly(m_url, 80)));
@@ -118,9 +121,12 @@ void NetRequest::executeTask()
 #endif
 
     request.setHeader(QNetworkRequest::UserAgentHeader, user_agent.toUtf8());
+    // Scope headers by pre-mirror host, then send to the mirror.
+    request.setUrl(originalUrl);
     for (auto& header_proxy : m_headerProxies) {
         header_proxy->writeHeaders(request);
     }
+    request.setUrl(m_url);
 
 #if defined(LAUNCHER_APPLICATION)
     request.setTransferTimeout(APPLICATION->settings()->get("RequestTimeout").toInt() * 1000);
